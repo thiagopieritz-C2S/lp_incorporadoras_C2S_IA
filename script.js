@@ -178,6 +178,11 @@
     const data = Object.fromEntries(new FormData(form).entries());
     data.pagina = location.href;
     data.utm = Object.fromEntries(new URLSearchParams(location.search).entries());
+    // Atribuição do RD Station: o script de rastreamento do RD grava o id do visitante no cookie "rdtrk"
+    try {
+      const m = document.cookie.match(/(?:^|; )rdtrk=([^;]*)/);
+      if (m) { const v = decodeURIComponent(m[1]); const j = v.startsWith('{') ? JSON.parse(v).id : v; if (j && String(j).length < 100) data.rd_client_id = String(j); }
+    } catch (e) {}
     btn.disabled = true; btn.textContent = 'Enviando...';
     try {
       const r = await fetch('/api/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
