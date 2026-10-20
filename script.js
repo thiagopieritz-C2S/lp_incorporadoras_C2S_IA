@@ -179,6 +179,7 @@
     if (!valid) { msg.className = 'form__msg bad'; msg.textContent = 'Confira os campos obrigatórios.'; return; }
     const data = {}; fields().forEach((el) => { if (el.name) data[el.name] = el.value; });
     data.pagina = location.href;
+    data.referrer = document.referrer || '';
     data.utm = Object.fromEntries(new URLSearchParams(location.search).entries());
     // Atribuição do RD Station: o script de rastreamento do RD grava o id do visitante no cookie "rdtrk"
     try {
