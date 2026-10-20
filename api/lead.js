@@ -58,7 +58,7 @@ module.exports = async function handler(req, res) {
       conversion_identifier: process.env.RD_CONVERSION_ID || 'lp-c2s-ia-incorporadoras',
       email: lead.email,
       name: lead.nome,
-      personal_phone: lead.whatsapp,
+      mobile_phone: lead.whatsapp,
       company_name: lead.empresa,
       job_title: lead.cargo,
       tags: ['lp-c2s-ia', 'incorporadoras'],
