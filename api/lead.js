@@ -68,6 +68,21 @@ module.exports = async function handler(req, res) {
     if (body.rd_client_id) payload.client_tracking_id = clean(body.rd_client_id);
     if (utm.utm_source) payload.traffic_source = clean(utm.utm_source);
     if (utm.utm_medium) payload.traffic_medium = clean(utm.utm_medium);
+    // Sem UTM: classifica pela página de origem (referrer) para o RD não marcar "Desconhecido"
+    if (!utm.utm_source && body.referrer) {
+      try {
+        const host = new URL(String(body.referrer)).hostname.replace(/^www\./, '');
+        const own = String(body.pagina || '').includes(host);
+        if (host && !own) {
+          const base = host.split('.').slice(-3, -1).join('.') || host;
+          let medium = 'referral';
+          if (/(^|\.)(google|bing|yahoo|duckduckgo|ecosia|yandex)\./.test(host)) medium = 'organic';
+          else if (/(facebook|instagram|linkedin|twitter|t\.co|youtube|tiktok|whatsapp)/.test(host)) medium = 'social';
+          payload.traffic_source = medium === 'organic' ? host.split('.').slice(-2)[0] === 'co' ? host.split('.').slice(-3)[0] : host.replace(/^.*?(google|bing|yahoo|duckduckgo|ecosia|yandex).*$/, '$1') : host;
+          payload.traffic_medium = medium;
+        }
+      } catch (e) {}
+    }
     if (utm.utm_campaign) payload.traffic_campaign = clean(utm.utm_campaign);
     if (utm.utm_content) payload.traffic_value = clean(utm.utm_content);
 
