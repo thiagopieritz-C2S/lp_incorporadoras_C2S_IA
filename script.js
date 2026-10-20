@@ -165,9 +165,10 @@
   const form = document.getElementById('lead-form');
   const msg = document.getElementById('form-msg');
   const btn = document.getElementById('form-btn');
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    e.stopPropagation(); // evita que o script do RD capture o form sozinho (conversão duplicada "lead-form")
+  // Não usamos <form>/evento submit de propósito: o script de rastreamento do RD captura
+  // qualquer <form> sozinho e criaria uma conversão duplicada ("lead-form").
+  const fields = () => form.querySelectorAll('input, select, textarea');
+  const send = async () => {
     msg.className = 'form__msg'; msg.textContent = '';
     let valid = true;
     form.querySelectorAll('[required]').forEach((el) => {
@@ -176,7 +177,7 @@
       if (!ok) valid = false;
     });
     if (!valid) { msg.className = 'form__msg bad'; msg.textContent = 'Confira os campos obrigatórios.'; return; }
-    const data = Object.fromEntries(new FormData(form).entries());
+    const data = {}; fields().forEach((el) => { if (el.name) data[el.name] = el.value; });
     data.pagina = location.href;
     data.utm = Object.fromEntries(new URLSearchParams(location.search).entries());
     // Atribuição do RD Station: o script de rastreamento do RD grava o id do visitante no cookie "rdtrk"
@@ -188,12 +189,14 @@
     try {
       const r = await fetch('/api/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
       if (!r.ok) throw new Error('http ' + r.status);
-      form.reset();
+      fields().forEach((el) => { el.value = ''; });
       msg.className = 'form__msg ok'; msg.textContent = 'Recebemos seu contato! Em breve nossa equipe fala com você.';
       if (window.dataLayer) window.dataLayer.push({ event: 'lead_enviado' });
       if (window.fbq) window.fbq('track', 'Lead');
     } catch (err) {
       msg.className = 'form__msg bad'; msg.textContent = 'Não foi possível enviar agora. Tente novamente em instantes.';
     } finally { btn.disabled = false; btn.textContent = 'Enviar'; }
-  });
+  };
+  btn.addEventListener('click', send);
+  form.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'BUTTON') { e.preventDefault(); send(); } });
 })();

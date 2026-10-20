@@ -193,7 +193,7 @@
       <h2>Pronto para parar de perder visitas?</h2>
       <p>O custo de não ter o C2S IA é o lead fechar com outra incorporadora.</p>
     </div>
-    <form class="form" id="lead-form" novalidate>
+    <div class="form" id="lead-form" role="form" aria-label="Fale com o C2S">
       <div class="row">
         <label class="field"><span>Nome *</span><input name="nome" type="text" placeholder="Seu nome completo" required autocomplete="name"></label>
         <label class="field"><span>E-mail corporativo *</span><input name="email" type="email" placeholder="voce@suaincorporadora.com.br" required autocomplete="email"></label>
@@ -211,9 +211,9 @@
       <label class="field"><span>Nome da empresa *</span><input name="empresa" type="text" placeholder="Nome da incorporadora" required autocomplete="organization"></label>
       <label class="field"><span>Mensagem</span><textarea name="mensagem" rows="4" placeholder="Conte um pouco sobre a sua operação (opcional)"></textarea></label>
       <input type="text" name="website" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
-      <button class="btn btn--primary btn--block" type="submit" id="form-btn">Enviar</button>
+      <button class="btn btn--primary btn--block" type="button" id="form-btn">Enviar</button>
       <p class="form__msg" id="form-msg" role="status"></p>
-    </form>
+    </div>
   </div>
 </section>
 
