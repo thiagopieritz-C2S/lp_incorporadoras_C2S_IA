@@ -167,6 +167,7 @@
   const btn = document.getElementById('form-btn');
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    e.stopPropagation(); // evita que o script do RD capture o form sozinho (conversão duplicada "lead-form")
     msg.className = 'form__msg'; msg.textContent = '';
     let valid = true;
     form.querySelectorAll('[required]').forEach((el) => {
